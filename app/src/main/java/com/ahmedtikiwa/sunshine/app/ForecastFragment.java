@@ -36,6 +36,7 @@ import java.util.ArrayList;
  * Created by Ahmed on 2016/09/23.
  */
 public class ForecastFragment extends Fragment {
+    private static final String LOG_TAG = ForecastFragment.class.getSimpleName();
     ArrayAdapter mAdapter;
     final static String TAG = ForecastFragment.class.getSimpleName();
     public SharedPreferences sharedPref;
@@ -235,6 +236,15 @@ public class ForecastFragment extends Fragment {
      * Prepare the weather high/lows for presentation.
      */
     private String formatHighLows(double high, double low) {
+        String unitsPreference = sharedPref.getString(getActivity().getString(R.string.pref_units_key), getString(R.string.pref_units_metric));
+
+        if (unitsPreference.equals(getActivity().getString(R.string.pref_units_imperial))) {
+            high = (high * 1.8) + 32;
+            low = (low * 1.8) + 32;
+        } else if (!unitsPreference.equals(getString(R.string.pref_units_metric))) {
+            Log.d(LOG_TAG, "Could not find unit " + unitsPreference);
+        }
+
         // For presentation, assume the user doesn't care about tenths of a degree.
         long roundedHigh = Math.round(high);
         long roundedLow = Math.round(low);
@@ -305,6 +315,7 @@ public class ForecastFragment extends Fragment {
 
             // Temperatures are in a child object called "temp".  Try not to name variables
             // "temp" when working with temperature.  It confuses everybody.
+
             JSONObject temperatureObject = dayForecast.getJSONObject(OWM_TEMPERATURE);
             double high = temperatureObject.getDouble(OWM_MAX);
             double low = temperatureObject.getDouble(OWM_MIN);

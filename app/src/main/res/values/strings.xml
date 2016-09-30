@@ -5,6 +5,13 @@
     <string name="action_settings">Settings</string>
     <string name="title_activity_settings">Settings</string>
     <string name="pref_location_title">Location</string>
+    <string name="pref_units_title">Temperature Units</string>
     <string name="pref_location_default" translatable="false">94503</string>
     <string name="pref_location_key" translatable="false">location</string>
+    <string name="pref_units_key" translatable="false">units</string>
+    <string name="pref_units_metric" translatable="false">metric</string>
+    <string name="pref_units_imperial" translatable="false">imperial</string>
+    <string name="pref_units_metric_label" translatable="false">Metric</string>
+    <string name="pref_units_imperial_label" translatable="false">Imperial</string>
+    <string name="preferred_location_map">Show Map</string>
 </resources>

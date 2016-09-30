@@ -3,7 +3,11 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
         android:id="@+id/action_settings"
-        android:title="@string/title_activity_settings"
         android:orderInCategory="100"
+        android:title="@string/title_activity_settings"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/action_display_map"
+        android:title="@string/preferred_location_map"
         app:showAsAction="never" />
 </menu>
