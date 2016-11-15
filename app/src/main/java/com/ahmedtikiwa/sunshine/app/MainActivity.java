@@ -14,6 +14,8 @@ public class MainActivity extends AppCompatActivity {
 
     private static final String LOG_TAG = MainActivity.class.getSimpleName();
     private SharedPreferences sharedPrefs;
+    private String mLocation;
+    private static final String FORECASTFRAGMENT_TAG = "FFTAG";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -22,10 +24,11 @@ public class MainActivity extends AppCompatActivity {
         Log.d(LOG_TAG, "onCreate");
 
         sharedPrefs = PreferenceManager.getDefaultSharedPreferences(this);
+        mLocation = Utility.getPreferredLocation(this);
 
         if (savedInstanceState != null) {
             getSupportFragmentManager().beginTransaction()
-                    .add(R.id.fragment, new ForecastFragment())
+                    .add(R.id.fragment, new ForecastFragment(), FORECASTFRAGMENT_TAG)
                     .commit();
         }
     }
@@ -59,6 +62,14 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        String location = Utility.getPreferredLocation(this);
+        if (location != null && !location.equals(mLocation)) {
+            ForecastFragment forecastFragment = (ForecastFragment)getSupportFragmentManager().findFragmentByTag(FORECASTFRAGMENT_TAG);
+            if (null != forecastFragment) {
+                forecastFragment.onLocationChanged();
+            }
+            mLocation = location;
+        }
         Log.d(LOG_TAG, "onResume");
     }
 
