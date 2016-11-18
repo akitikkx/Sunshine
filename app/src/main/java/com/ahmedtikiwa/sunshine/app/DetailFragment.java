@@ -168,6 +168,9 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
             float windDirStr = data.getFloat(COL_WEATHER_DEGREES);
             mWindView.setText(Utility.getFormattedWind(getActivity(), windSpeedStr, windDirStr));
 
+            float pressure = data.getFloat(COL_WEATHER_PRESSURE);
+            mPressureView.setText(getActivity().getString(R.string.format_pressure, pressure));
+
             forecastText = String.format("%s - %s - %s/%s", dateText, weatherDesc, high, low);
 
             if (mShareActionProvider != null) {
