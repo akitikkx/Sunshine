@@ -2,6 +2,7 @@ package com.ahmedtikiwa.sunshine.app;
 
 import android.content.Intent;
 import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -28,10 +29,12 @@ import com.ahmedtikiwa.sunshine.app.data.WeatherContract;
 
 public class DetailFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
 
+    public static final String DETAIL_URI = "URI";
     private ShareActionProvider mShareActionProvider;
     private static final int DETAIL_LOADER = 0;
     public TextView forecast;
     public String forecastText;
+    private Uri mUri;
     public static String LOG_TAG = DetailFragment.class.getSimpleName();
     public static final String FORECAST_SHARE_HASTAG = "#SunshineApp";
 
@@ -82,6 +85,11 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
+        Bundle arguments = getArguments();
+        if (arguments != null) {
+            mUri = arguments.getParcelable(DetailFragment.DETAIL_URI);
+        }
+
         View rootView = inflater.inflate(R.layout.fragment_detail, container, false);
 
         mIconView = (ImageView) rootView.findViewById(R.id.detail_icon);
@@ -96,6 +104,17 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
 
 
         return rootView;
+    }
+
+    void onLocationChanged(String newLocation) {
+        // replace the uri since the location was changed
+        Uri uri = mUri;
+        if (null != uri) {
+            long date = WeatherContract.WeatherEntry.getDateFromUri(uri);
+            Uri updatedUri = WeatherContract.WeatherEntry.buildWeatherLocationWithDate(newLocation, date);
+            mUri = updatedUri;
+            getLoaderManager().restartLoader(DETAIL_LOADER, null, this);
+        }
     }
 
     @Override
@@ -129,11 +148,11 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-        Intent intent = getActivity().getIntent();
-        if (intent == null) {
-            return null;
+        if (null != mUri) {
+            return new CursorLoader(getActivity(), mUri, DETAIL_COLUMNS, null, null, null);
         }
-        return new CursorLoader(getActivity(), intent.getData(), DETAIL_COLUMNS, null, null, null);
+
+        return null;
     }
 
     @Override
@@ -142,7 +161,7 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
 
             int weatherId = data.getInt(COL_WEATHER_CONDITION_ID);
 
-            mIconView.setImageResource(R.mipmap.ic_launcher);
+            mIconView.setImageResource(Utility.getArtResourceForWeatherCondition(weatherId));
 
             long date = data.getLong(COL_WEATHER_DATE);
             String friendlyDateText = Utility.getDayName(getActivity(), date);

@@ -98,7 +98,15 @@ public class ForecastAdapter extends CursorAdapter {
         int weatherId = cursor.getInt(ForecastFragment.COL_WEATHER_ID);
         // Use placeholder image for now
 
-        viewHolder.iconView.setImageResource(R.mipmap.ic_launcher);
+        int viewType = getItemViewType(cursor.getPosition());
+        switch (viewType) {
+            case VIEW_TYPE_TODAY:
+                viewHolder.iconView.setImageResource(Utility.getArtResourceForWeatherCondition(cursor.getInt(ForecastFragment.COL_WEATHER_CONDITION_ID)));
+                break;
+            case VIEW_TYPE_FUTURE_DAY:
+                viewHolder.iconView.setImageResource(Utility.getIconResourceForWeatherCondition(cursor.getInt(ForecastFragment.COL_WEATHER_CONDITION_ID)));
+                break;
+        }
 
         // TODO Read date from cursor
         long weatherDate = cursor.getLong(ForecastFragment.COL_WEATHER_DATE);
@@ -136,7 +144,7 @@ public class ForecastAdapter extends CursorAdapter {
         public ViewHolder(View view) {
             iconView = (ImageView) view.findViewById(R.id.list_item_icon);
             weatherDateView = (TextView) view.findViewById(R.id.list_item_date_textview);
-            weatherDescView = (TextView)view.findViewById(R.id.list_item_forecast_textview);
+            weatherDescView = (TextView) view.findViewById(R.id.list_item_forecast_textview);
             highView = (TextView) view.findViewById(R.id.list_item_high_textview);
             lowView = (TextView) view.findViewById(R.id.list_item_low_textview);
         }

@@ -1,6 +1,5 @@
 package com.ahmedtikiwa.sunshine.app;
 
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.net.Uri;
@@ -66,6 +65,10 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
 
     }
 
+    public interface Callback {
+        public void onItemSelected(Uri dateUri);
+    }
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -114,14 +117,11 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
-                Cursor cursor = (Cursor)adapterView.getItemAtPosition(position);
+                Cursor cursor = (Cursor) adapterView.getItemAtPosition(position);
                 if (cursor != null) {
                     String locationSetting = Utility.getPreferredLocation(getActivity());
-                    Intent intent = new Intent(getActivity(), DetailActivity.class)
-                            .setData(WeatherContract.WeatherEntry.buildWeatherLocationWithDate(
-                                    locationSetting, cursor.getLong(COL_WEATHER_DATE)
-                            ));
-                    startActivity(intent);
+                    ((Callback) getActivity()).onItemSelected(WeatherContract.WeatherEntry.buildWeatherLocationWithDate(
+                            locationSetting, cursor.getLong(COL_WEATHER_DATE)));
                 }
             }
         });
