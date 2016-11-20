@@ -124,6 +124,8 @@ public class ForecastAdapter extends CursorAdapter {
 
         viewHolder.weatherDescView.setText(weatherDesc);
 
+        viewHolder.iconView.setContentDescription(weatherDesc);
+
         // Read user preference for metric or imperial temperature units
         boolean isMetric = Utility.isMetric(context);
 

@@ -106,6 +106,17 @@
                 android:textAppearance="?android:textAppearanceLarge" />
         </LinearLayout>
 
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="center_horizontal">
+
+            <com.ahmedtikiwa.sunshine.app.SunshineCustomCompassView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+
+        </LinearLayout>
+
     </LinearLayout>
 
 </ScrollView>
