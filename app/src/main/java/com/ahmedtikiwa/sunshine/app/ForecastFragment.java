@@ -30,6 +30,7 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
     private ForecastAdapter mForeacastAdapater;
     private ListView mListView;
     private int mPosition = ListView.INVALID_POSITION;
+    private boolean mUseTodayLayout;
     private static final String SELECTED_KEY = "selected_position";
     final static String TAG = ForecastFragment.class.getSimpleName();
     public SharedPreferences sharedPref;
@@ -133,8 +134,16 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
         if (savedInstanceState != null && savedInstanceState.containsKey(SELECTED_KEY)) {
             mPosition = savedInstanceState.getInt(SELECTED_KEY);
         }
+        mForeacastAdapater.setUseTodayLayout(mUseTodayLayout);
 
         return view;
+    }
+
+    public void setUseTodayLayout(boolean useTodayLayout) {
+        mUseTodayLayout = useTodayLayout;
+        if (mForeacastAdapater != null) {
+            mForeacastAdapater.setUseTodayLayout(mUseTodayLayout);
+        }
     }
 
     @Override
