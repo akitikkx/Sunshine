@@ -1,8 +1,10 @@
 package com.ahmedtikiwa.sunshine.app.services;
 
 import android.app.IntentService;
+import android.content.BroadcastReceiver;
 import android.content.ContentUris;
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
@@ -407,6 +409,17 @@ public class SunshineService extends IntentService {
                     " - " + highAndLow;
         }
         return resultStrs;
+    }
+
+    static public class AlarmReceiver extends BroadcastReceiver {
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            Intent sendIntent = new Intent(context, SunshineService.class);
+            sendIntent.putExtra(SunshineService.EXTRAS_LOCATION_QUERY, intent.getStringExtra(SunshineService.EXTRAS_LOCATION_QUERY));
+            context.startService(sendIntent);
+
+        }
     }
 
 }

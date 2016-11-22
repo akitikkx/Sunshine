@@ -43,6 +43,9 @@
             android:authorities="com.example.android.sunshine.app" />
 
         <service android:name=".services.SunshineService" />
+
+
+        <receiver android:name=".services.SunshineService$AlarmReceiver" />
     </application>
 
 </manifest>
