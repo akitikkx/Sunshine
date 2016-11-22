@@ -14,7 +14,6 @@ import com.ahmedtikiwa.sunshine.app.sync.SunshineSyncAdapter;
 public class MainActivity extends AppCompatActivity implements ForecastFragment.Callback {
 
     private static final String LOG_TAG = MainActivity.class.getSimpleName();
-    private SharedPreferences sharedPrefs;
     private String mLocation;
     private boolean mTwoPane;
     private static final String FORECASTFRAGMENT_TAG = "FFTAG";
@@ -101,28 +100,8 @@ public class MainActivity extends AppCompatActivity implements ForecastFragment.
 
         if (id == R.id.action_settings) {
             startActivity(new Intent(MainActivity.this, SettingsActivity.class));
-        } else if (id == R.id.action_display_map) {
-            showMapWithPreferredLocation();
-            return true;
         }
         return super.onOptionsItemSelected(menuItem);
-    }
-
-    private void showMapWithPreferredLocation() {
-        String preferredLocation = sharedPrefs.getString(getString(R.string.pref_location_key), getString(R.string.pref_location_default));
-
-        Uri mapData = Uri.parse("geo:0,0?").buildUpon()
-                .appendQueryParameter("q", preferredLocation)
-                .build();
-
-        Intent mapIntent = new Intent(Intent.ACTION_VIEW);
-        mapIntent.setData(mapData);
-
-        if (mapIntent.resolveActivity(getPackageManager()) != null) {
-            startActivity(mapIntent);
-        } else {
-            Log.d(LOG_TAG, "Could not find application to open map request");
-        }
     }
 
     @Override

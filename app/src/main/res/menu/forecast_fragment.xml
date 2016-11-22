@@ -2,7 +2,7 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
-        android:id="@+id/action_refresh"
-        android:title="@string/refresh"
+        android:id="@+id/action_display_map"
+        android:title="@string/preferred_location_map"
         app:showAsAction="never" />
 </menu>
