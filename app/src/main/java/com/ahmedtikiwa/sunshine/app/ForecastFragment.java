@@ -20,6 +20,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import com.ahmedtikiwa.sunshine.app.data.WeatherContract;
 import com.ahmedtikiwa.sunshine.app.sync.SunshineSyncAdapter;
@@ -114,9 +115,9 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
         // Using the URI scheme for showing a location found on a map.  This super-handy
         // intent can is detailed in the "Common Intents" page of Android's developer site:
         // http://developer.android.com/guide/components/intents-common.html#Maps
-        if ( null != mForecastAdapter ) {
+        if (null != mForecastAdapter) {
             Cursor c = mForecastAdapter.getCursor();
-            if ( null != c ) {
+            if (null != c) {
                 c.moveToPosition(0);
                 String posLat = c.getString(COL_COORD_LAT);
                 String posLong = c.getString(COL_COORD_LONG);
@@ -141,9 +142,11 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
 
         mForecastAdapter = new ForecastAdapter(getActivity(), null, 0);
         mListView = (ListView) view.findViewById(R.id.list_view_forecast);
+        View emptyForecastView = view.findViewById(R.id.list_view_forecast_empty);
 
         // assign the adapter to the listview
         mListView.setAdapter(mForecastAdapter);
+        mListView.setEmptyView(emptyForecastView);
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
@@ -205,6 +208,20 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
         mForecastAdapter.swapCursor(data);
         if (mPosition != ListView.INVALID_POSITION) {
             mListView.smoothScrollToPosition(mPosition);
+        }
+        updateEmptyView();
+    }
+
+    private void updateEmptyView() {
+        if (mForecastAdapter.getCount() == 0) {
+            TextView emptyView = (TextView) getView().findViewById(R.id.list_view_forecast_empty);
+            if (emptyView != null) {
+                int message = R.string.empty_state_forecast_list;
+                if (!Utility.isNetworkAvailable(getActivity())) {
+                    message = R.string.empty_forecast_no_network;
+                }
+                emptyView.setText(message);
+            }
         }
     }
 

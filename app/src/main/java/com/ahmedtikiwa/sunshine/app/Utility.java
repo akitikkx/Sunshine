@@ -18,6 +18,8 @@ package com.ahmedtikiwa.sunshine.app;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.preference.PreferenceManager;
 import android.text.format.Time;
 
@@ -57,7 +59,7 @@ public class Utility {
         if (julianDay == currentJulianDay) {
             String today = context.getString(R.string.today);
             int formatId = R.string.format_full_friendly_date;
-            return String.format(context.getString( formatId), today, getFormattedMonthDay(context, dateInMillis));
+            return String.format(context.getString(formatId), today, getFormattedMonthDay(context, dateInMillis));
         } else if (julianDay < currentJulianDay + 7) {
             // If the input date is less than a week in the future, just return the day name.
             return getDayName(context, dateInMillis);
@@ -129,8 +131,8 @@ public class Utility {
 
     public static String formatTemperature(Context context, double temperature, boolean isMetric) {
         double temp;
-        if ( !isMetric ) {
-            temp = 9*temperature/5+32;
+        if (!isMetric) {
+            temp = 9 * temperature / 5 + 32;
         } else {
             temp = temperature;
         }
@@ -179,6 +181,7 @@ public class Utility {
     /**
      * Helper method to provide the icon resource id according to the weather condition id returned
      * by the OpenWeatherMap call.
+     *
      * @param weatherId from OpenWeatherMap API response
      * @return resource id for the corresponding icon. -1 if no relation is found.
      */
@@ -214,6 +217,7 @@ public class Utility {
     /**
      * Helper method to provide the art resource id according to the weather condition id returned
      * by the OpenWeatherMap call.
+     *
      * @param weatherId from OpenWeatherMap API response
      * @return resource id for the corresponding image. -1 if no relation is found.
      */
@@ -244,5 +248,11 @@ public class Utility {
             return R.drawable.art_clouds;
         }
         return -1;
+    }
+
+    static boolean isNetworkAvailable(Context context) {
+        ConnectivityManager connectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
+        return networkInfo != null && networkInfo.isConnectedOrConnecting();
     }
 }
