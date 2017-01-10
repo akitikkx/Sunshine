@@ -23,6 +23,8 @@ import android.net.NetworkInfo;
 import android.preference.PreferenceManager;
 import android.text.format.Time;
 
+import com.ahmedtikiwa.sunshine.app.sync.SunshineSyncAdapter;
+
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -254,5 +256,23 @@ public class Utility {
         ConnectivityManager connectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
         return networkInfo != null && networkInfo.isConnectedOrConnecting();
+    }
+
+    /**
+     *
+     * @param context
+     * @return
+     */
+    @SuppressWarnings("ResourceType")
+    static int getLocationStatus(Context context) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        return preferences.getInt(context.getString(R.string.pref_location_status_key), 0);
+    }
+
+    static void resetLocationStatus(Context context) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putInt(context.getString(R.string.pref_location_status_key), SunshineSyncAdapter.LOCATION_STATUS_UNKNOWN);
+        editor.apply();
     }
 }

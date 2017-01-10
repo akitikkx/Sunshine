@@ -20,6 +20,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.annotation.IntDef;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.TaskStackBuilder;
 import android.text.format.Time;
@@ -39,6 +40,8 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.text.SimpleDateFormat;
@@ -64,6 +67,16 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter {
     private static final int INDEX_MAX_TEMP = 1;
     private static final int INDEX_MIN_TEMP = 2;
     private static final int INDEX_SHORT_DESC = 3;
+
+    @Retention(RetentionPolicy.SOURCE)
+    @IntDef({LOCATION_STATUS_OK, LOCATION_STATUS_SERVER_DOWN, LOCATION_STATUS_SERVER_INVALID, LOCATION_STATUS_UNKNOWN, LOCATION_STATUS_INVALID})
+    public @interface LocationStatus{}
+
+    public static final int LOCATION_STATUS_OK = 0;
+    public static final int LOCATION_STATUS_SERVER_DOWN = 1;
+    public static final int LOCATION_STATUS_SERVER_INVALID = 2;
+    public static final int LOCATION_STATUS_UNKNOWN = 3;
+    public static final int LOCATION_STATUS_INVALID = 4;
 
     //  amount of milliseconds in a day
     private static final long DAY_IN_MILLIS = 1000 * 60 * 60 * 24;
@@ -138,6 +151,7 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter {
 
             if (buffer.length() == 0) {
                 // Stream was empty.  No point in parsing.
+                setLocationStatus(getContext(), LOCATION_STATUS_SERVER_DOWN);
                 return;
             }
             forecastJsonStr = buffer.toString();
@@ -146,10 +160,12 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter {
             Log.e(LOG_TAG, "Error ", e);
             // If the code didn't successfully get the weather data, there's no point in attemping
             // to parse it.
+            setLocationStatus(getContext(), LOCATION_STATUS_SERVER_DOWN);
             return;
         } catch (JSONException e) {
             Log.e(LOG_TAG, e.getMessage(), e);
             e.printStackTrace();
+            setLocationStatus(getContext(), LOCATION_STATUS_SERVER_INVALID);
         } finally {
             if (urlConnection != null) {
                 urlConnection.disconnect();
@@ -187,6 +203,7 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter {
         final String OWM_CITY = "city";
         final String OWM_CITY_NAME = "name";
         final String OWM_COORD = "coord";
+        final String OWM_MESSAGE_CODE = "cod";
 
         // Location coordinate
         final String OWM_LATITUDE = "lat";
@@ -221,6 +238,19 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter {
             double cityLongitude = cityCoord.getDouble(OWM_LONGITUDE);
 
             long locationId = addLocation(locationSetting, cityName, cityLatitude, cityLongitude);
+
+            if (forecastJson.has(OWM_MESSAGE_CODE)) {
+                int errorCode = forecastJson.getInt(OWM_MESSAGE_CODE);
+                switch (errorCode) {
+                    case HttpURLConnection.HTTP_OK :
+                        break;
+                    case HttpURLConnection.HTTP_NOT_FOUND:
+                        setLocationStatus(getContext(), LOCATION_STATUS_INVALID);
+                        break;
+                    default:
+                        setLocationStatus(getContext(), SunshineSyncAdapter.LOCATION_STATUS_SERVER_DOWN);
+                }
+            }
 
             // Insert the new weather information into the database
             Vector<ContentValues> cVVector = new Vector<ContentValues>(weatherArray.length());
@@ -333,6 +363,7 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter {
             }
 
             Log.d(LOG_TAG, "Sunshine Service Complete. " + cVVector.size() + " Inserted");
+            setLocationStatus(getContext(), LOCATION_STATUS_OK);
 
             String[] resultStrs = convertContentValuesToUXFormat(cVVector);
             return resultStrs;
@@ -340,6 +371,7 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter {
         } catch (JSONException e) {
             Log.e(LOG_TAG, e.getMessage(), e);
             e.printStackTrace();
+            setLocationStatus(getContext(), LOCATION_STATUS_SERVER_INVALID);
         }
         return null;
     }
@@ -610,5 +642,12 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter {
             }
         }
 
+    }
+
+    static private void setLocationStatus(Context context, @LocationStatus int locationStatus) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putInt(context.getString(R.string.pref_location_status_key), locationStatus);
+        editor.commit();
     }
 }
