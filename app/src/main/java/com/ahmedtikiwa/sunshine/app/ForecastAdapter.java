@@ -44,7 +44,7 @@ public class ForecastAdapter extends CursorAdapter {
      */
     private String formatHighLows(double high, double low) {
         boolean isMetric = Utility.isMetric(mContext);
-        String highLowStr = Utility.formatTemperature(mContext, high, isMetric) + "/" + Utility.formatTemperature(mContext, low, isMetric);
+        String highLowStr = Utility.formatTemperature(mContext, high) + "/" + Utility.formatTemperature(mContext, low);
         return highLowStr;
     }
 
@@ -123,23 +123,18 @@ public class ForecastAdapter extends CursorAdapter {
         String weatherDesc = cursor.getString(ForecastFragment.COL_WEATHER_DESC);
 
         viewHolder.weatherDescView.setText(weatherDesc);
+        viewHolder.weatherDescView.setContentDescription(context.getString(R.string.a11y_forecast, weatherDesc));
 
         viewHolder.iconView.setContentDescription(weatherDesc);
 
-        // Read user preference for metric or imperial temperature units
-        boolean isMetric = Utility.isMetric(context);
-
         // Read high temperature from cursor
-        double high = cursor.getDouble(ForecastFragment.COL_WEATHER_MAX_TEMP);
-
-        viewHolder.highView.setText(Utility.formatTemperature(mContext, high, isMetric));
+        String high = Utility.formatTemperature(context, cursor.getDouble(ForecastFragment.COL_WEATHER_MAX_TEMP));
+        viewHolder.highView.setContentDescription(context.getString(R.string.a11y_high_temp, high));
 
         // TODO Read low temperature from cursor
-        double low = cursor.getDouble(ForecastFragment.COL_WEATHER_MIN_TEMP);
-
-        viewHolder.lowView.setText(Utility.formatTemperature(mContext, low, isMetric));
-
-
+        String low = Utility.formatTemperature(context, cursor.getDouble(ForecastFragment.COL_WEATHER_MIN_TEMP));
+        viewHolder.lowView.setText(low);
+        viewHolder.lowView.setContentDescription(context.getString(R.string.a11y_low_temp, low));
     }
 
     public static class ViewHolder {
