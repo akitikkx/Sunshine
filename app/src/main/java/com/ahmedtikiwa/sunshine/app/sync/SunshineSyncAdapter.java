@@ -2,6 +2,7 @@ package com.ahmedtikiwa.sunshine.app.sync;
 
 import android.accounts.Account;
 import android.accounts.AccountManager;
+import android.annotation.SuppressLint;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.AbstractThreadedSyncAdapter;
@@ -14,8 +15,11 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SyncRequest;
 import android.content.SyncResult;
+import android.content.res.Resources;
 import android.database.Cursor;
 import android.database.DatabaseUtils;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -31,6 +35,7 @@ import com.ahmedtikiwa.sunshine.app.DetailActivity;
 import com.ahmedtikiwa.sunshine.app.R;
 import com.ahmedtikiwa.sunshine.app.Utility;
 import com.ahmedtikiwa.sunshine.app.data.WeatherContract;
+import com.bumptech.glide.Glide;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -47,6 +52,7 @@ import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Vector;
+import java.util.concurrent.ExecutionException;
 
 
 public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter {
@@ -70,7 +76,8 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter {
 
     @Retention(RetentionPolicy.SOURCE)
     @IntDef({LOCATION_STATUS_OK, LOCATION_STATUS_SERVER_DOWN, LOCATION_STATUS_SERVER_INVALID, LOCATION_STATUS_UNKNOWN, LOCATION_STATUS_INVALID})
-    public @interface LocationStatus{}
+    public @interface LocationStatus {
+    }
 
     public static final int LOCATION_STATUS_OK = 0;
     public static final int LOCATION_STATUS_SERVER_DOWN = 1;
@@ -242,7 +249,7 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter {
             if (forecastJson.has(OWM_MESSAGE_CODE)) {
                 int errorCode = forecastJson.getInt(OWM_MESSAGE_CODE);
                 switch (errorCode) {
-                    case HttpURLConnection.HTTP_OK :
+                    case HttpURLConnection.HTTP_OK:
                         break;
                     case HttpURLConnection.HTTP_NOT_FOUND:
                         setLocationStatus(getContext(), LOCATION_STATUS_INVALID);
@@ -603,17 +610,46 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter {
                     String desc = cursor.getString(INDEX_SHORT_DESC);
 
                     int iconId = Utility.getIconResourceForWeatherCondition(weatherId);
+                    Resources resources = context.getResources();
+                    int artResourceId = Utility.getArtResourceForWeatherCondition(weatherId);
+                    String artUrl = Utility.getArtUrlForWeatherCondition(context, weatherId);
+
+
+                    @SuppressLint("InlinedApi")
+                    int largeIconWidth = Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB
+                            ? resources.getDimensionPixelSize(android.R.dimen.notification_large_icon_width)
+                            : resources.getDimensionPixelSize(R.dimen.notification_large_icon_default);
+
+                    @SuppressLint("InlinedApi")
+                    int largeIconHeight = Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB
+                            ? resources.getDimensionPixelSize(android.R.dimen.notification_large_icon_height)
+                            : resources.getDimensionPixelSize(R.dimen.notification_large_icon_default);
+
+                    Bitmap largeIcon;
+                    try {
+                        largeIcon = Glide.with(context)
+                                .load(artUrl)
+                                .asBitmap()
+                                .error(artResourceId)
+                                .fitCenter()
+                                .into(largeIconWidth, largeIconHeight).get();
+                    } catch (InterruptedException | ExecutionException e) {
+                        Log.e(LOG_TAG, "Error retrieving large icon from " + artUrl, e);
+                        largeIcon = BitmapFactory.decodeResource(resources, artResourceId);
+                    }
+
                     String title = context.getString(R.string.app_name);
 
                     // Define the text of the forecast.
                     String contentText = String.format(context.getString(R.string.format_notification),
                             desc,
-                            Utility.formatTemperature(getContext(), high, Utility.isMetric(getContext())),
-                            Utility.formatTemperature(getContext(), low, Utility.isMetric(getContext())));
+                            Utility.formatTemperature(getContext(), high),
+                            Utility.formatTemperature(getContext(), low));
 
                     //build your notification here.
                     NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(getContext())
                             .setSmallIcon(iconId)
+                            .setLargeIcon(largeIcon)
                             .setContentTitle(title)
                             .setContentText(contentText);
 
