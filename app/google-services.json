@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "662116295317",
+    "firebase_url": "https://sunshine-ab550.firebaseio.com",
+    "project_id": "sunshine-ab550",
+    "storage_bucket": "sunshine-ab550.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:662116295317:android:a25a496388175a2c",
+        "android_client_info": {
+          "package_name": "com.ahmedtikiwa.sunshine.app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "662116295317-9df03e34jt38ml27e5jbsqasm0o4v7qb.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.ahmedtikiwa.sunshine.app",
+            "certificate_hash": "1E89A2D772B596A0332916D646209C2AF185910C"
+          }
+        },
+        {
+          "client_id": "662116295317-1v96jjfodi4k4cerb23tasl9694vcv9v.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCNqprx79nU9vpyrciLc7Ql2F22oz4wWJQ"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "662116295317-1v96jjfodi4k4cerb23tasl9694vcv9v.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
