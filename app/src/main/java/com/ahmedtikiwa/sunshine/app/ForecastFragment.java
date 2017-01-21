@@ -238,7 +238,7 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
         if (mForecastAdapter.getCount() == 0) {
             TextView emptyView = (TextView) getView().findViewById(R.id.list_view_forecast_empty);
             if (emptyView != null) {
-                int message = R.string.empty_state_forecast_list;
+                int message = R.string.empty_forecast_list;
                 @SunshineSyncAdapter.LocationStatus int location = Utility.getLocationStatus(getActivity());
                 switch (location) {
                     case SunshineSyncAdapter.LOCATION_STATUS_SERVER_DOWN:
@@ -252,7 +252,7 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
                         break;
                     default:
                         if (!Utility.isNetworkAvailable(getActivity())) {
-                            message = R.string.empty_forecast_no_network;
+                            message = R.string.empty_forecast_list_no_network;
                         }
 
                 }

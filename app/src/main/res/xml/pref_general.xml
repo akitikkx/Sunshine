@@ -7,7 +7,7 @@
         android:inputType="text"
         android:key="@string/pref_location_key"
         android:singleLine="true"
-        android:title="@string/pref_location_title"
+        android:title="@string/pref_location_label"
         custom:minLength="3" />
 
     <ListPreference
@@ -15,7 +15,7 @@
         android:entries="@array/preferred_units_entries"
         android:entryValues="@array/preferred_units_values"
         android:key="@string/pref_units_key"
-        android:title="@string/pref_units_title" />
+        android:title="@string/pref_units_label" />
 
     <ListPreference
         android:defaultValue="@string/pref_art_pack_sunshine"
