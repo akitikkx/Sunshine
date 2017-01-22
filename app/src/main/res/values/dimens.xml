@@ -27,4 +27,10 @@
      on devices that don't yet have Roboto -->
     <dimen name="forecast_text_width">49dp</dimen>
     <dimen name="forecast_temperature_space">8dp</dimen>
+
+    <!-- Needed if we aren't including the Material Design Library -->
+    <dimen name="appbar_elevation">4dp</dimen>
+
+    <!-- The amount we want the details view to overlap the app bar -->
+    <dimen name="details_app_bar_overlap">24dp</dimen>
 </resources>

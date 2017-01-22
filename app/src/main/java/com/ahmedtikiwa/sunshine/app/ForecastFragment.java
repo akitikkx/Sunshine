@@ -235,9 +235,10 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
     }
 
     private void updateEmptyView() {
-        if (mForecastAdapter.getCount() == 0) {
-            TextView emptyView = (TextView) getView().findViewById(R.id.list_view_forecast_empty);
-            if (emptyView != null) {
+        if ( mForecastAdapter.getCount() == 0 ) {
+            TextView tv = (TextView) getView().findViewById(R.id.list_view_forecast_empty);
+            if ( null != tv ) {
+                // if cursor is empty, why? do we have an invalid location
                 int message = R.string.empty_forecast_list;
                 @SunshineSyncAdapter.LocationStatus int location = Utility.getLocationStatus(getActivity());
                 switch (location) {
@@ -251,12 +252,11 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
                         message = R.string.empty_forecast_list_invalid_location;
                         break;
                     default:
-                        if (!Utility.isNetworkAvailable(getActivity())) {
+                        if (!Utility.isNetworkAvailable(getActivity()) ) {
                             message = R.string.empty_forecast_list_no_network;
                         }
-
                 }
-                emptyView.setText(message);
+                tv.setText(message);
             }
         }
     }
