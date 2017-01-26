@@ -190,9 +190,9 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
     public View onCreateView(LayoutInflater inflater, ViewGroup viewGroup, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_main, viewGroup, false);
 
-        mRecyclerView = (RecyclerView) view.findViewById(R.id.list_view_forecast);
+        mRecyclerView = (RecyclerView) view.findViewById(R.id.recyclerview_forecast);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-        View emptyView = view.findViewById(R.id.list_view_forecast_empty);
+        View emptyView = view.findViewById(R.id.recyclerview_forecast_empty);
 
         mForecastAdapter = new ForecastAdapter(getActivity(), new ForecastAdapter.ForecastAdapterOnClickHandler() {
             @Override
