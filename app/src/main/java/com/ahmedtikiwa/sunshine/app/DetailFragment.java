@@ -35,12 +35,14 @@ import com.bumptech.glide.Glide;
 public class DetailFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
 
     public static final String DETAIL_URI = "URI";
+    static final String DETAIL_TRANSITION_ANIMATION = "DTA";
     private ShareActionProvider mShareActionProvider;
     private static final int DETAIL_LOADER = 0;
     public TextView forecast;
     private String mForecast;
     public String forecastText;
     private Uri mUri;
+    private boolean mTransitionAnimation;
     public static String LOG_TAG = DetailFragment.class.getSimpleName();
     public static final String FORECAST_SHARE_HASTAG = "#SunshineApp";
 
@@ -96,6 +98,7 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
         Bundle arguments = getArguments();
         if (arguments != null) {
             mUri = arguments.getParcelable(DetailFragment.DETAIL_URI);
+            mTransitionAnimation = arguments.getBoolean(DetailFragment.DETAIL_TRANSITION_ANIMATION, false);
         }
 
         View rootView = inflater.inflate(R.layout.fragment_detail_start, container, false);
