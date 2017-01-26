@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.ahmedtikiwa.sunshine.app.data.WeatherContract;
 import com.bumptech.glide.Glide;
 
 /**
@@ -23,11 +24,19 @@ public class ForecastAdapter extends RecyclerView.Adapter<ForecastAdapter.Foreca
 
     private Cursor mCursor;
     final private Context mContext;
+    final private ForecastAdapterOnClickHandler mClickHandler;
+    final private View mEmptyView;
 
     private boolean mUseTodayLayout = true;
 
-    public ForecastAdapter(Context context) {
+    public ForecastAdapter(Context context, ForecastAdapterOnClickHandler dh, View emptyView) {
         mContext = context;
+        mClickHandler = dh;
+        mEmptyView = emptyView;
+    }
+
+    public static interface ForecastAdapterOnClickHandler {
+        void onClick(Long date, ForecastAdapterViewHolder vh);
     }
 
     public void setUseTodayLayout(boolean useTodayLayout) {
@@ -59,7 +68,7 @@ public class ForecastAdapter extends RecyclerView.Adapter<ForecastAdapter.Foreca
             view.setFocusable(true);
             return new ForecastAdapterViewHolder(view);
         } else {
-            throw new RuntimeException("Not bound to RecyclerViewSelection");
+            throw new RuntimeException("Not bound to RecyclerView");
         }
     }
 
@@ -131,6 +140,7 @@ public class ForecastAdapter extends RecyclerView.Adapter<ForecastAdapter.Foreca
     public void swapCursor(Cursor newCursor) {
         mCursor = newCursor;
         notifyDataSetChanged();
+        mEmptyView.setVisibility(getItemCount() == 0 ? View.VISIBLE : View.GONE);
     }
 
     public Cursor getCursor() {
@@ -162,7 +172,7 @@ public class ForecastAdapter extends RecyclerView.Adapter<ForecastAdapter.Foreca
                 " - " + highAndLow;
     }
 
-    public static class ForecastAdapterViewHolder extends RecyclerView.ViewHolder {
+    public class ForecastAdapterViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         public final ImageView mIconView;
         public final TextView mDateView;
         public final TextView mDescriptionView;
@@ -176,6 +186,15 @@ public class ForecastAdapter extends RecyclerView.Adapter<ForecastAdapter.Foreca
             mDescriptionView = (TextView) view.findViewById(R.id.list_item_forecast_textview);
             mHighTempView = (TextView) view.findViewById(R.id.list_item_high_textview);
             mLowTempView = (TextView) view.findViewById(R.id.list_item_low_textview);
+            view.setOnClickListener(this);
+        }
+
+        @Override
+        public void onClick(View view) {
+            int adapterPosition = getAdapterPosition();
+            mCursor.moveToPosition(adapterPosition);
+            int dateColumnIndex = mCursor.getColumnIndex(WeatherContract.WeatherEntry.COLUMN_DATE);
+            mClickHandler.onClick(mCursor.getLong(dateColumnIndex), this);
         }
     }
 }
