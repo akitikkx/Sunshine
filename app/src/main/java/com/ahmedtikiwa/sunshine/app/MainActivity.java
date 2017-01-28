@@ -145,10 +145,12 @@ public class MainActivity extends AppCompatActivity implements ForecastFragment.
                     .replace(R.id.weather_detail_container, detailFragment, DETAILFRAGMENT_TAG)
                     .commit();
         } else {
-            Intent intent = new Intent(this, DetailActivity.class).setData(dateUri);
+            Intent intent = new Intent(this, DetailActivity.class)
+                    .setData(dateUri);
 
-            ActivityOptionsCompat activityOptions = ActivityOptionsCompat.makeSceneTransitionAnimation(this,
-                    new Pair<View, String>(vh.mIconView, getString(R.string.detail_icon_transition_name)));
+            ActivityOptionsCompat activityOptions =
+                    ActivityOptionsCompat.makeSceneTransitionAnimation(this,
+                            new Pair<View, String>(vh.mIconView, getString(R.string.detail_icon_transition_name)));
             ActivityCompat.startActivity(this, intent, activityOptions.toBundle());
         }
     }

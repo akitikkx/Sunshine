@@ -231,6 +231,7 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
         }
 
 
+        // setting the elevation of the appbar on scrolling
         final AppBarLayout appbarView = (AppBarLayout)view.findViewById(R.id.appbar);
         if (null != appbarView) {
             ViewCompat.setElevation(appbarView, 0);
